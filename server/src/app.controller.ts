@@ -1,12 +1,18 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Controller, Post } from '@nestjs/common';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  @Post('/create')
+  createFile() {
+    const folder = '/app/data';
+    const currentDate = new Date();
+    const fileName = `${currentDate.toISOString()}.txt`;
+    const filePath = path.join(folder, fileName);
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+    fs.writeFileSync(filePath, '');
+
+    return { fileName };
   }
 }

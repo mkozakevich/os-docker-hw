@@ -1,13 +1,25 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { Component, inject, signal } from '@angular/core';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.css',
 })
 export class AppComponent {
-  title = 'client';
+  private readonly httpClient = inject(HttpClient);
+
+  protected readonly createdFilesNames = signal<string[]>([]);
+
+  protected onClick() {
+    this.httpClient
+      .post<{ fileName: string }>('http://localhost:3000/create', {})
+      .subscribe(({ fileName }) => {
+        this.createdFilesNames.update((currentValue) => [
+          ...currentValue,
+          fileName,
+        ]);
+      });
+  }
 }
